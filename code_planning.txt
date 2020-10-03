@@ -1,0 +1,93 @@
+Code planning
+
+For planning the structure of the project
+
+-------------------------------------------------------------------------------
+
+FUNCTIONS:
+-----------------------------------------
+function name
+ takes:
+ does:
+ gives:
+ notes:
+ uses:
+
+main
+ takes: nothing
+ does:  calls other functions to make timelines
+
+add_event
+ takes: event year, event description, event group, old list
+ does:  adds event year and description and group to list in correct 
+        chronological spot
+ gives: new list
+ notes: errors if there is a year/group collision
+
+remove_event
+ takes: old event year, old event group, old list
+ gives: new list
+
+bulk_remove_events
+ takes: lower year, greater year, groups, old list
+ gives: new list
+
+change_event_desc
+ takes: old event year, old event group, new event description, old list
+ does:  goes to event of given year and group and replaces its description
+ gives: new list
+
+move_event
+ takes: old event year, old event group, new event year, old list
+ does:  changes year of event and reorders list
+ gives: new list
+ notes: errors if there is a year/group collision
+
+bulk_move_events
+ takes: lower year, greater year, groups, year offset, old list
+ does:  moves all events between two specified years and of correct groups 
+        then reorders events 
+ gives: new list
+ notes: errors if there is a year/group collision
+
+change_event_group
+ takes: old event year, old event group, new event group, old list
+ does:  changes group of given event
+ gives: new list
+ notes: errors if there is a year/group collision
+
+bulk_change_event_groups
+ takes: lower year, greater year, groups, new group, old list
+ gives: new list
+ notes: errors if there is a year/group collision
+
+print_timeline
+ takes: groups to print, list
+ does:  formats then prints events of given groups to console
+
+save_as_timeline
+ takes: name to save timeline under
+ does:  associates load file name with session then writes events to a json file
+ gives: success/error code
+
+save_timeline
+ takes: nothing
+ does:  overwrites existing json file corresponding to current session
+ gives: success/error code
+ notes: errors if current session doesn't have a load file name associated with it
+
+list_save_files
+ takes: nothing
+ does:  looks in directory and prints a list of save files
+
+load_save_file
+ takes: save file name
+ does:  populates workspace with timeline of given json file
+ notes: errors if save file doesn't exist
+
+write_timeline_to_file
+ takes: groups to print, output file name, list
+ does:  formats then prints events of given group to given file name,
+        formatting is different for this to facilitate copy pasting into
+        word processors
+ gives: success/error code
