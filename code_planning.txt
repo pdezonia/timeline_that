@@ -15,7 +15,7 @@ function name
 
 main
  takes: nothing
- does:  calls other functions to make timelines
+ does:  calls other functions to make timelines, runs in a loop until user exits
 
 add_event
  takes: event year, event description, event group, old list
@@ -61,7 +61,7 @@ bulk_change_event_groups
  gives: new list
  notes: errors if there is a year/group collision
 
-print_timeline
+X print_timeline
  takes: groups to print, list
  does:  formats then prints events of given groups to console
 
@@ -69,6 +69,7 @@ save_as_timeline
  takes: name to save timeline under
  does:  associates load file name with session then writes events to a json file
  gives: success/error code
+ notes: errors if file of same name exists
 
 save_timeline
  takes: nothing
