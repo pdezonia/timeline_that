@@ -22,8 +22,8 @@ print("Welcome to Timeline That!")
 timeline = []
 # Use dummy list early on for testing
 timeline = [[10000, 0, "War was beginning"],
-            [10010, 1, "Paris trip"],
-            [10005, 2, "mp3 players dominant"]]
+            [10005, 1, "mp3 players dominant"],
+            [10010, 2, "Paris trip"]]
 keep_running = True
 
 # Start main loop
@@ -49,6 +49,9 @@ while keep_running:
         event_input = input("Enter year, group number, and description: ")
         [year, group, desc] = event_input.split(" ", 2)
         timeline = event_functions.add_event(int(year), int(group), desc, timeline)
+    elif user_choice == 3:
+        print("move event")
+        event_functions.move_event(10000, 0, 2101, timeline)
     else:
         print("Invalid choice")
 

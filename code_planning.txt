@@ -17,7 +17,7 @@ main
  takes: nothing
  does:  calls other functions to make timelines, runs in a loop until user exits
 
-add_event
+X add_event
  takes: event year, event description, event group, old list
  does:  adds event year and description and group to list in correct 
         chronological spot
