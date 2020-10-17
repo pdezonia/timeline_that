@@ -43,26 +43,24 @@ def find_event(event_year, event_group, timeline):
     """
     # Filter by year
     y_match_rows = find_matching_inds(event_year, get_list_column(0, timeline))
-    print(f"get_list_column: {get_list_column(0, timeline)}")
-    print(f"y_match_rows: {y_match_rows}")
+    # Filter by group
+    g_match_rows = find_matching_inds(event_group, get_list_column(1, timeline))
     # Check if one row was found, if not filter by group as well
-    if len(y_match_rows) == 1:
-        print("in unique case")
-        print(y_match_rows[0])
-        return_row = y_match_rows[0]
+    # if len(y_match_rows) == 1:
+    #     return_row = y_match_rows[0]
+    if len(y_match_rows) == 0 or len(g_match_rows) == 0:
+        # If no entry exists, return special number to show it
+        # print("In len = 0 statement of find_event")
+        # print(y_match_rows)
+        return_row = -1
     else:
-        # Filter just by group
-        g_match_rows = find_matching_inds(event_group, get_list_column(1, timeline))
         # Find overlap between two filters
-        y_row_set = set(y_match_rows)
-        g_row_set = set(g_match_rows)
-        print("in else")
-        print(y_match_rows, g_match_rows)
-        print(y_row_set & g_row_set)
-        return_ind_set = y_row_set & g_row_set
-        popped_return_ind = return_ind_set.pop()
-        print(popped_return_ind)
-        return_row = popped_return_ind
+        # print(y_match_rows, g_match_rows)
+        yg_match_rows = [x for x in y_match_rows if x in g_match_rows]
+        if len(yg_match_rows) == 0:
+            return_row = -1
+        else:
+            return_row = yg_match_rows[0] # Take sole element in list
     
     return return_row
 
@@ -72,10 +70,16 @@ def add_event(event_year, event_group, event_desc, timeline):
     timeline by year, then group.
     event_year and event_group are ints, event_desc is a string,
     timeline is a list.
-    Returns a new timeline
+    Returns a new timeline and success code if there were no
+    conflicts.
     """
-    timeline.append([event_year, event_group, event_desc])
-    return reorder_timeline(timeline)
+    if find_event(event_year, event_group, timeline) == -1:
+        timeline.append([event_year, event_group, event_desc])
+        was_successful = 1
+    else:
+        was_successful = 0
+        
+    return  was_successful, reorder_timeline(timeline)
 
 def move_event(old_event_year, event_group, new_event_year, timeline):
     """
@@ -83,8 +87,48 @@ def move_event(old_event_year, event_group, new_event_year, timeline):
     reorders timeline.
     old_event_year, new_event_year, and event_group are all ints,
     timeline is a list.
-    Returns a new timeilne
+    Returns a new timeilne and a 1 if successful or the original
+    timeline and a 0 if not.
     """
-    print(get_list_column(0, timeline))
+    # print(get_list_column(0, timeline))
     event_ind = find_event(old_event_year, event_group, timeline)
-    print(event_ind)
+    # Check if there already exists an entry with same year-group info
+    if find_event(new_event_year, event_group, timeline) != -1:
+        # print(f"found events: {find_event(new_event_year, event_group, timeline)}")
+        was_successful = 0
+    else:
+        was_successful = 1
+        print(event_ind)
+        timeline[event_ind][0] = new_event_year
+        timeline = reorder_timeline(timeline)
+
+    # Return success code for use in bulk mover
+    return was_successful, timeline
+
+def bulk_move_events(lower_bound, upper_bound, group_list, year_offset, timeline):
+    """
+    Given a timespan and group numbers, moves all events of given groups 
+    within the timespan (including bounds) by given year offset.
+    lower_bound, upper_bound, and year offset are ints
+    group_list is a 1-D list
+    timeline is a 2-D list
+    positive timeoffset moves events forward in time; negative, backwards
+    Returns a new timeline and 1 if successful and a 0 if not.
+    """
+    year_list = get_list_column(0, timeline)
+    # Determine which direction to move through list, starting from end 
+    # if moving events forwards, starting from beginning otherwise
+    if year_offset < 0:
+        range_bounds = (0, len(year_list), 1)
+    elif year_offset > 0:
+        range_bounds = (len(year_list) - 1, -1, -1)
+    for i in range(range_bounds[0], range_bounds[1], range_bounds[2]):
+        is_in_range = year_list[i] > lower_bound and year_list[i] < upper_bound
+        is_in_group = timeline[i][1] in group_list or -1 in group_list
+        if is_in_range and is_in_group:
+            old_year = timeline[i][0]
+            event_group = timeline[i][1]
+            new_year = old_year + year_offset
+            was_successful, timeline = move_event(old_year, event_group, 
+                                                  new_event_year, timeilne)
+            # TODO code rest of this: what to do if unsuccessful, etc

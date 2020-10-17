@@ -37,7 +37,7 @@ change_event_desc
  does:  goes to event of given year and group and replaces its description
  gives: new list
 
-move_event
+X move_event
  takes: old event year, old event group, new event year, old list
  does:  changes year of event and reorders list
  gives: new list
