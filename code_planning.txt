@@ -24,7 +24,7 @@ X add_event
  gives: new list
  notes: errors if there is a year/group collision
 
-remove_event
+X remove_event
  takes: old event year, old event group, old list
  gives: new list
 
@@ -43,7 +43,7 @@ X move_event
  gives: new list
  notes: errors if there is a year/group collision
 
-bulk_move_events
+X bulk_move_events
  takes: lower year, greater year, groups, year offset, old list
  does:  moves all events between two specified years and of correct groups 
         then reorders events 

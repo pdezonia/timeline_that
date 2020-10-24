@@ -32,7 +32,8 @@ of.print_timeline([trip_group], timeline)
 
 # Test adding an event
 print("\nAdding an event to AYBABTU timeline")
-was_successful, timeline = ef.add_event(10005, base_group, "What happened?", timeline)
+was_successful, timeline = ef.add_event(10005, base_group, "What happened?", 
+                                        timeline)
 print(f"Was it succesful? {was_successful}, expected 1")
 print("all groups, add event check")
 of.print_timeline([-1], timeline)
@@ -81,7 +82,46 @@ of.print_timeline([-1], timeline)
 
 # Test event bulk mover
 print("\nBulk moving events ...")
-x = range(0, 10)
-print(x[0], x[9])
-x = range(9, -1)
-print(x[0], x[9])
+# for i in range(0, 10, 1):
+#     print(i, end=" ")
+# print(" ")
+# for j in range(9, -1, -1):
+#     print(j, end=" ")
+print("move events in travel group forward 1 year")
+was_successful, timeline = ef.bulk_move_events(10000, 10030, [trip_group], 1, 
+                                               timeline)
+of.print_timeline([-1], timeline)
+
+print("move events in travel group backward 1 year")
+was_successful, timeline = ef.bulk_move_events(10000, 10030, [trip_group], -1, 
+                                               timeline)
+of.print_timeline([-1], timeline)
+
+print("move events in travel group forward 10 years, attempting to create",
+      "a clash")
+was_successful, timeline = ef.bulk_move_events(10000, 10030, [trip_group], 10, 
+                                               timeline)
+of.print_timeline([-1], timeline)
+
+print("move events in travel group backward 10 years, attempting to create",
+      "a clash")
+was_successful, timeline = ef.bulk_move_events(10000, 10031, [trip_group], -10, 
+                                               timeline)
+of.print_timeline([-1], timeline)
+
+print("move last two events in base group back 10 years to generate clash", 
+      "and test error checking")
+was_successful, timeline = ef.bulk_move_events(10005, 10020, [base_group], -10,
+                                               timeline)
+of.print_timeline([-1], timeline)
+print(f"was successful: {was_successful}, expected 0")
+
+# Test event remover
+print("\nRemoving events")
+print("remove bomb quote")
+was_successful, timeline = ef.remove_event(10015, base_group, timeline)
+of.print_timeline([-1], timeline)
+print("remove bomb quote again to get error")
+was_successful, timeline = ef.remove_event(10015, base_group, timeline)
+of.print_timeline([-1], timeline)
+print(f"was successful: {was_successful}, expected 0")

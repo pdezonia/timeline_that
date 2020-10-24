@@ -81,6 +81,28 @@ def add_event(event_year, event_group, event_desc, timeline):
         
     return  was_successful, reorder_timeline(timeline)
 
+def remove_event(event_year, event_group, timeline):
+    """
+    Given event year and group, removes event from timeline.
+    event_year, event_group are ints
+    timeline is 2-D list
+    Returns a new timeline and success code if event was successfully
+    removed.
+    """
+    # print("before removing event")
+    # print(timeline)
+    remove_row = find_event(event_year, event_group, timeline)
+    if remove_row != -1:
+        timeline.remove(timeline[remove_row])
+        was_successful = 1
+    else:
+        was_successful = 0
+    
+    # print("after removing event")
+    # print(timeline)
+
+    return was_successful, timeline
+
 def move_event(old_event_year, event_group, new_event_year, timeline):
     """
     Given event details and a target year, changes year of event, then
@@ -115,7 +137,9 @@ def bulk_move_events(lower_bound, upper_bound, group_list, year_offset, timeline
     positive timeoffset moves events forward in time; negative, backwards
     Returns a new timeline and 1 if successful and a 0 if not.
     """
+    backup_timeline = timeline
     year_list = get_list_column(0, timeline)
+    was_successful = 0
     # Determine which direction to move through list, starting from end 
     # if moving events forwards, starting from beginning otherwise
     if year_offset < 0:
@@ -128,7 +152,13 @@ def bulk_move_events(lower_bound, upper_bound, group_list, year_offset, timeline
         if is_in_range and is_in_group:
             old_year = timeline[i][0]
             event_group = timeline[i][1]
-            new_year = old_year + year_offset
+            new_event_year = old_year + year_offset
             was_successful, timeline = move_event(old_year, event_group, 
-                                                  new_event_year, timeilne)
-            # TODO code rest of this: what to do if unsuccessful, etc
+                                                  new_event_year, timeline)
+            # Abort program if we encounter a single year-group clash
+            # print(f"On {i}, was successful = {was_successful}")
+            if not was_successful:
+                timeline = backup_timeline
+                break
+    
+    return was_successful, timeline
